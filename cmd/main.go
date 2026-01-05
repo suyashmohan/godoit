@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	todov1 "godoit/gen/todo/v1"
-	"godoit/gen/todo/v1/todov1connect"
 	"log"
 	"net/http"
 	"sync"
 	"time"
+
+	todov1 "github.com/suyashmohan/godoit/gen/todo/v1"
+	"github.com/suyashmohan/godoit/gen/todo/v1/todov1connect"
 
 	"connectrpc.com/connect"
 	"golang.org/x/net/http2"

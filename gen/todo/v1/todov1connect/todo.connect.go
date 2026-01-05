@@ -8,7 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	v1 "godoit/gen/todo/v1"
+	v1 "github.com/suyashmohan/godoit/gen/todo/v1"
 	http "net/http"
 	strings "strings"
 )

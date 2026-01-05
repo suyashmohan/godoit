@@ -1,4 +1,4 @@
-module godoit
+module github.com/suyashmohan/godoit
 
 go 1.25.5
 

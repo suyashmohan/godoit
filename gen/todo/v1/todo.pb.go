@@ -475,8 +475,8 @@ const file_todo_v1_todo_proto_rawDesc = "" +
 	"\n" +
 	"UpdateTodo\x12\x1a.todo.v1.UpdateTodoRequest\x1a\x1b.todo.v1.UpdateTodoResponse\x12E\n" +
 	"\n" +
-	"DeleteTodo\x12\x1a.todo.v1.DeleteTodoRequest\x1a\x1b.todo.v1.DeleteTodoResponseBp\n" +
-	"\vcom.todo.v1B\tTodoProtoP\x01Z\x19godoit/gen/todo/v1;todov1\xa2\x02\x03TXX\xaa\x02\aTodo.V1\xca\x02\aTodo\\V1\xe2\x02\x13Todo\\V1\\GPBMetadata\xea\x02\bTodo::V1b\x06proto3"
+	"DeleteTodo\x12\x1a.todo.v1.DeleteTodoRequest\x1a\x1b.todo.v1.DeleteTodoResponseB\x87\x01\n" +
+	"\vcom.todo.v1B\tTodoProtoP\x01Z0github.com/suyashmohan/godoit/gen/todo/v1;todov1\xa2\x02\x03TXX\xaa\x02\aTodo.V1\xca\x02\aTodo\\V1\xe2\x02\x13Todo\\V1\\GPBMetadata\xea\x02\bTodo::V1b\x06proto3"
 
 var (
 	file_todo_v1_todo_proto_rawDescOnce sync.Once
