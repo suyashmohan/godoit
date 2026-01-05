@@ -1,0 +1,19 @@
+version: v1
+managed:
+  enabled: true
+plugins:
+  # Generate Go code
+  - plugin: buf.build/connectrpc/go
+    out: ../gen
+    opt: paths=source_relative
+  - plugin: buf.build/protocolbuffers/go
+    out: ../gen
+    opt: paths=source_relative
+  
+  # Generate TypeScript code
+  - plugin: buf.build/connectrpc/es
+    out: ../frontend/src/lib/gen
+    opt: target=ts
+  - plugin: buf.build/bufbuild/es
+    out: ../frontend/src/lib/gen
+    opt: target=ts
