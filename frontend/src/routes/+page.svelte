@@ -9,7 +9,7 @@
       text: "Hello",
     });
     console.log(res);
-    const id = res.todo.id;
+    const id = res.todo?.id;
 
     res = await todoClient.updateTodo({
       id,

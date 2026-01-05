@@ -7,7 +7,19 @@ const config = {
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
 
-	kit: { adapter: adapter() }
+	kit: {
+		adapter: adapter({
+			pages: 'build',
+			assets: 'build',
+			fallback: 'index.html', // Important for SPA mode!
+			precompress: false,
+			strict: true
+		}),
+		// Disable server-side rendering
+		prerender: {
+			entries: []
+		}
+	}
 };
 
 export default config;
