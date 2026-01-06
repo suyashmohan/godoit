@@ -67,7 +67,7 @@
   </form>
   <ul>
     {#each todos as todo}
-      <li class="p-2">
+      <li class="flex flex-row gap-2 p-2">
         <input
           class="checkbox"
           type="checkbox"
