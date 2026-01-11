@@ -5,99 +5,45 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
-	"time"
+	"os"
 
-	todov1 "github.com/suyashmohan/godoit/gen/todo/v1"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
+	"github.com/suyashmohan/godoit/gen/database"
 	"github.com/suyashmohan/godoit/gen/todo/v1/todov1connect"
+	"github.com/suyashmohan/godoit/internal/services"
 
-	"connectrpc.com/connect"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
 
-type todoServer struct {
-	mu     sync.Mutex
-	todos  map[int32]*todov1.Todo
-	nextID int32
-}
+func ConnectionString() string {
+	Host := os.Getenv("DB_HOST")
+	Port := os.Getenv("DB_PORT")
+	User := os.Getenv("DB_USER")
+	Password := os.Getenv("DB_PASSWORD")
+	DBName := os.Getenv("DB_NAME")
+	SSLMode := os.Getenv("DB_SSLMODE")
 
-// CreateTodo implements [todov1connect.TodoServiceHandler].
-func (t *todoServer) CreateTodo(ctx context.Context, req *todov1.CreateTodoRequest) (*todov1.CreateTodoResponse, error) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
-	todo := &todov1.Todo{
-		Id:        t.nextID,
-		Text:      req.Text,
-		Completed: false,
-		CreatedAt: time.Now().String(),
-	}
-	t.todos[todo.Id] = todo
-	t.nextID++
-
-	return &todov1.CreateTodoResponse{
-		Todo: todo,
-	}, nil
-}
-
-// DeleteTodo implements [todov1connect.TodoServiceHandler].
-func (t *todoServer) DeleteTodo(ctx context.Context, req *todov1.DeleteTodoRequest) (*todov1.DeleteTodoResponse, error) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
-	_, exists := t.todos[req.Id]
-	if !exists {
-		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("todo not found"))
-	}
-
-	delete(t.todos, req.Id)
-
-	return &todov1.DeleteTodoResponse{
-		Success: true,
-	}, nil
-}
-
-// GetTodos implements [todov1connect.TodoServiceHandler].
-func (t *todoServer) GetTodos(ctx context.Context, req *todov1.GetTodosRequest) (*todov1.GetTodosResponse, error) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
-	todos := make([]*todov1.Todo, 0, len(t.todos))
-	for _, todo := range t.todos {
-		todos = append(todos, todo)
-	}
-
-	return &todov1.GetTodosResponse{
-		Todos: todos,
-	}, nil
-}
-
-// UpdateTodo implements [todov1connect.TodoServiceHandler].
-func (t *todoServer) UpdateTodo(ctx context.Context, req *todov1.UpdateTodoRequest) (*todov1.UpdateTodoResponse, error) {
-	t.mu.Lock()
-	defer t.mu.Unlock()
-
-	todo, exists := t.todos[req.Id]
-	if !exists {
-		return nil, connect.NewError(connect.CodeNotFound, fmt.Errorf("todo not found"))
-	}
-
-	todo.Completed = req.Completed
-
-	return &todov1.UpdateTodoResponse{
-		Todo: todo,
-	}, nil
-}
-
-func newTodoServer() *todoServer {
-	return &todoServer{
-		todos:  make(map[int32]*todov1.Todo),
-		nextID: 1,
-	}
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		Host, Port, User, Password, DBName, SSLMode,
+	)
 }
 
 func main() {
+	ctx := context.Background()
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("failed to load .env file", err)
+	}
+
+	dbConn, err := pgxpool.New(ctx, ConnectionString())
+	if err != nil {
+		log.Fatal("failed to connect to database", err)
+	}
+	defer dbConn.Close()
+
 	mux := http.NewServeMux()
 
 	corsMiddleware := func(next http.Handler) http.Handler {
@@ -115,8 +61,8 @@ func main() {
 		})
 	}
 
-	server := newTodoServer()
-	path, handler := todov1connect.NewTodoServiceHandler(server)
+	todoService := services.NewTodoService(database.New(dbConn))
+	path, handler := todov1connect.NewTodoServiceHandler(todoService)
 	mux.Handle(path, corsMiddleware(handler))
 
 	log.Println("Server running on :8080")
