@@ -54,25 +54,25 @@ The system follows a **Schema-First** and **RPC** (Remote Procedure Call) design
 ```mermaid
 graph TD
     subgraph "Frontend (Browser)"
-        UI[Svelte Components]
-        Client[Generated TS Client]
+        UI["Svelte Components"]
+        Client["Generated TS Client"]
     end
 
     subgraph "Backend (Go Server)"
-        Handler[Connect HTTP Handler]
-        Service[Service Implementation]
-        DB[Database Layer (sqlc)]
+        Handler["Connect HTTP Handler"]
+        Service["Service Implementation"]
+        DB["Database Layer (sqlc)"]
     end
 
     subgraph "Data Store"
-        PSQL[(PostgreSQL)]
+        PSQL[("PostgreSQL")]
     end
 
-    UI -->|Calls| Client
-    Client -->|HTTP/2 or HTTP/1.1| Handler
-    Handler -->|Routes to| Service
-    Service -->|Executes Logic| DB
-    DB -->|SQL Query| PSQL
+    UI -->|"Calls"| Client
+    Client -->|"HTTP/2 or HTTP/1.1"| Handler
+    Handler -->|"Routes to"| Service
+    Service -->|"Executes Logic"| DB
+    DB -->|"SQL Query"| PSQL
 ```
 
 ### Data Flow
